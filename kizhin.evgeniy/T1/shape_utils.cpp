@@ -3,9 +3,11 @@
 #include <cstring>
 #include <stdexcept>
 #include "rectangle.hpp"
+#include "regular.hpp"
 
 namespace kizhin {
   Rectangle* createRectangle(const double*);
+  Regular* createRegular(const double*);
   void scaleShape(Shape*, const double*);
 }
 
@@ -52,6 +54,9 @@ kizhin::Shape* kizhin::createShape(const char* shapeName, const double* shapePar
   if (std::strcmp(shapeName, "RECTANGLE") == 0) {
     return createRectangle(shapeParams);
   }
+  if (std::strcmp(shapeName, "REGULAR") == 0) {
+    return createRegular(shapeParams);
+  }
   return nullptr;
 }
 
@@ -69,3 +74,19 @@ kizhin::Rectangle* kizhin::createRectangle(const double* params)
   return new Rectangle { width, height, center };
 }
 
+kizhin::Regular* kizhin::createRegular(const double* params)
+{
+  assert(params[0] == 6);
+  const point_t p1 { params[1], params[2] };
+  const point_t p2 { params[3], params[4] };
+  const point_t p3 { params[5], params[6] };
+  Regular* result = nullptr;
+  try {
+    result = new Regular { p1, p2, p3 };
+  } catch (const std::bad_alloc&) {
+    throw;
+  } catch (const std::logic_error&) {
+    return nullptr;
+  }
+  return result;
+}
